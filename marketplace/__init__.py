@@ -12,9 +12,10 @@ import yaml
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
+
 @contextmanager
 def get_db_cursor():
-    cursor = sqlite3.connect(f"{module_dir}/botmarketplace.db").cursor()
+    cursor = sqlite3.connect(f"{module_dir}/data/botmarketplace.db").cursor()
     try:
         yield cursor
     finally:
@@ -30,10 +31,9 @@ def setup_db_file():
             logging.info("Database setup complete.")
 
 
-
 # check if botmarketplace.db file exists. if not, create one and setup the tables
 try:
-    with open(f"{module_dir}/botmarketplace.db", 'r'):
+    with open(f"{module_dir}/data/botmarketplace.db", 'r'):
         logging.info("botmarketplace.db detected. skipping db setup.")
 except FileNotFoundError:
     setup_db_file()
