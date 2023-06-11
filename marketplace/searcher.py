@@ -1,3 +1,4 @@
+import asyncio
 from typing import List, Optional
 
 from marketplace import get_db_cursor
@@ -5,25 +6,30 @@ from marketplace.info import get_user_avatar
 from models.bot_list_model import BotListResponse
 
 
-def get_all_bots() -> List[BotListResponse]:
+async def get_all_bots() -> List[BotListResponse]:
     """
     Get all bots registered in the marketplace.
     """
     with get_db_cursor() as cursor:
         cursor.execute("SELECT * FROM bots")
         bots = cursor.fetchall()
+
+    tasks = []
+    for bot in bots:
+        tasks.append(asyncio.ensure_future(get_avatar(bot[0])))
+    avatars = await asyncio.gather(*tasks)
     return [
         BotListResponse(
-            username=bot[0],
-            name=bot[1],
-            description=bot[2],
-            avatar_url=get_avatar(bot[0])
-        ) for bot in bots
+            username=bot[0][0],
+            name=bot[0][1],
+            description=bot[0][2],
+            avatar_url=bot[1]
+        ) for bot in zip(bots, avatars)
     ]
 
 
-def get_avatar(username: str) -> Optional[str]:
+async def get_avatar(username: str) -> Optional[str]:
     try:
-        return get_user_avatar(username)
+        return await get_user_avatar(username)
     except Exception:
         return None

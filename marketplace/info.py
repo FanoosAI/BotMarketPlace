@@ -1,6 +1,7 @@
 import re
 from typing import Tuple
-
+import asyncio
+import aiohttp
 import requests
 from fastapi import HTTPException
 from marketplace import config
@@ -25,15 +26,17 @@ def get_user_info(username: str):
     return req.json()
 
 
-def get_user_avatar(username: str) -> str:
+async def get_user_avatar(username: str) -> str:
     user, server = get_username_and_server(username)
     path = config['homeserver_url'] + config['paths']['user_avatar'].format(user, server)
-    try:
-        # TODO: make this async
-        req = requests.get(path, timeout=5)
-        avatar_url = req.json()['avatar_url']
-        return avatar_url
-    except requests.exceptions.Timeout:
-        raise Exception("Timeout while trying to get user avatar.")
-    except KeyError:
-        raise Exception("User does not have an avatar.")
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(path, timeout=5) as resp:
+                if resp.status == 200:
+                    response = await resp.json()
+                    avatar_url = response['avatar_url']
+                    return avatar_url
+                raise Exception("User does not have an avatar.")
+        except asyncio.TimeoutError:
+            raise Exception("Timeout while trying to get user avatar.")

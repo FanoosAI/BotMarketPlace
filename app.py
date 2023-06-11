@@ -44,7 +44,7 @@ async def root():
 
 @app.get("/public-bots")
 async def public_bots() -> List[bot_list_model.BotListResponse]:
-    return searcher.get_all_bots()
+    return await searcher.get_all_bots()
 
 
 @app.post("/register")
