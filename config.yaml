@@ -1,3 +1,4 @@
-homeserver: 'https://parsi.ai'
+homeserver: parsi.ai
+homeserver_url: 'https://parsi.ai'
 paths:
-  user_info: /_matrix/client/v3/profile/@ssaaeee:parsi.ai
+  user_info: /_matrix/client/v3/profile/@{}:{}

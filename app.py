@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from marketplace import registry
 from models import register_model
 
-
 app = FastAPI()
 # handle corse
 app.add_middleware(
@@ -34,6 +33,7 @@ stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.DEBUG)
 logging.getLogger().addHandler(stream_handler)
 
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to the BOT Marketplace backend server."
@@ -46,14 +46,12 @@ async def public_bots():
 
 
 @app.post("/register")
-async def register_bot(registry_model: register_model.RegisterBotModel):
-    try:
-        registry.register_bot(
-            registry_model.username,
-            registry_model.name,
-            registry_model.description,
-            registry_model.registered_at,
-            registry_model.registered_by
-        )
-    except ValueError as err:
-        return {"error": str(err)}
+async def register_bot(registry_model: register_model.RegisterBotModel) -> register_model.RegisterBotResponse:
+    registry.register_bot(
+        registry_model.username,
+        registry_model.name,
+        registry_model.description,
+        registry_model.registered_at,
+        registry_model.registered_by
+    )
+    return register_model.RegisterBotResponse(message=f"Bot {registry_model.username} registered successfully.")

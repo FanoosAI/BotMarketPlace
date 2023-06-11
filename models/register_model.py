@@ -9,3 +9,7 @@ class RegisterBotModel(BaseModel):
     description: str
     registered_at: datetime
     registered_by: str
+
+
+class RegisterBotResponse(BaseModel):
+    message: str
