@@ -2,3 +2,4 @@ homeserver: parsi.ai
 homeserver_url: 'https://parsi.ai'
 paths:
   user_info: /_matrix/client/v3/profile/@{}:{}
+  user_avatar: /_matrix/client/v3/profile/@{}:{}/avatar_url
