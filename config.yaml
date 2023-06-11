@@ -1,0 +1,3 @@
+homeserver: 'https://parsi.ai'
+paths:
+  - user_info: /_matrix/client/v3/profile/@ssaaeee:parsi.ai
