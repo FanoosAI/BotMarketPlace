@@ -1,9 +1,11 @@
 import logging
 from logging.handlers import RotatingFileHandler
+from typing import List
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from marketplace import registry
-from models import register_model
+from marketplace import registry, searcher
+from models import register_model, bot_list_model
 
 app = FastAPI()
 # handle corse
@@ -41,8 +43,8 @@ async def root():
 
 
 @app.get("/public-bots")
-async def public_bots():
-    pass
+async def public_bots() -> List[bot_list_model.BotListResponse]:
+    return searcher.get_all_bots()
 
 
 @app.post("/register")
@@ -54,4 +56,5 @@ async def register_bot(registry_model: register_model.RegisterBotModel) -> regis
         registry_model.registered_at,
         registry_model.registered_by
     )
-    return register_model.RegisterBotResponse(message=f"Bot {registry_model.username} registered successfully.")
+    return register_model.RegisterBotResponse(
+        message=f"Bot {registry_model.username} registered successfully.")
