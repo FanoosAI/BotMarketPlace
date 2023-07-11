@@ -2,7 +2,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from typing import List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from marketplace import registry, searcher
 from models import register_model, bot_list_model
@@ -48,8 +48,10 @@ async def public_bots() -> List[bot_list_model.BotListResponse]:
 
 
 @app.post("/register")
-async def register_bot(registry_model: register_model.RegisterBotModel) -> register_model.RegisterBotResponse:
+async def register_bot(request: Request, registry_model: register_model.RegisterBotModel) -> \
+        register_model.RegisterBotResponse:
     registry.register_bot(
+        request,
         registry_model.username,
         registry_model.name,
         registry_model.description,

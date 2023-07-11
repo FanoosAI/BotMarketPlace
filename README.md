@@ -18,9 +18,19 @@ The server will be running on port 8058
 
 <hr>
 
+## Security measures
+the /public-bots can be accessed without any authentication. However, /register must only be 
+accessible to authorized clients. (like botfather)
+So, API keys are used for /register API. store the API keys in `marketplace/data/api_keys.yaml` file (which is ignored in 
+the git repo) in this format:
+```yaml
+username: API_KEY
+'@botfather:parsi.ai': SECRET_API_KEY
+```
+This API_KEY must be provided in the header of the POST request with it's key being 'Authorization'.
+<hr>
+
 ## notes
 - The sql database is stored in the `marketplace/data` folder so that it can be 
 persisted even if the docker container is removed.
-- Currently, no authentication is implemented, so anyone can register a bot.
-- Therefor it should not be publicly exposed to the internet.
-Security measures will be implemented in the next version
+- The `marketplace/data/api_keys.yaml` file must be provided manually when deploying the project.

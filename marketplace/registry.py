@@ -1,27 +1,28 @@
 """
 This module contains functions for registering bots in the marketplace.
 """
-
+import logging
+import os
 from typing import Optional
 from datetime import datetime
-from fastapi import HTTPException
-from marketplace import get_db_cursor
+
+import yaml
+from fastapi import HTTPException, Request
 from marketplace.info import get_user_info
+from marketplace.database_manager import manager
 
 
-def register_bot(username: str, name: str, description: Optional[str],
+def register_bot(request: Request, username: str, name: str, description: Optional[str],
                  registered_at: datetime, registered_by: str):
     """
     Register a bot in the marketplace.
     """
+    authenticate_api_key(request, registered_by)
     validate_username(username)
     check_username_existance(username, registered_by)
     check_for_repeated_registry(username)
 
-    with get_db_cursor() as cursor:
-        cursor.execute("INSERT INTO bots VALUES (?, ?, ?, ?, ?)",
-                       (username, name, description, registered_at, registered_by))
-        cursor.connection.commit()
+    manager().register_bot(username, name, description, registered_at, registered_by)
 
 
 def validate_username(username: str):
@@ -51,7 +52,24 @@ def check_username_existance(bot_username: str, registrar_username: str):
 
 def check_for_repeated_registry(bot_username: str):
     # check if bot is already registered
-    with get_db_cursor() as cursor:
-        cursor.execute("SELECT * FROM bots WHERE username=?", (bot_username,))
-        if cursor.fetchone() is not None:
-            raise HTTPException(400, "Bot is already registered.")
+    if manager().get_bot(bot_username) is not None:
+        raise HTTPException(400, "Bot is already registered.")
+
+
+def authenticate_api_key(request: Request, username: str):
+    api_key = request.headers.get("Authorization")
+    if not api_key:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    module_dir = os.path.dirname(os.path.abspath(__file__))
+    try:
+        with open(f"{module_dir}/data/api_keys.yaml") as f:
+            api_keys = yaml.safe_load(f)
+            if username in api_keys:
+                if api_keys[username] != api_key:
+                    raise HTTPException(401, "Invalid API key.")
+            else:
+                raise HTTPException(401, "Username not allowed to register bots.")
+    except FileNotFoundError:
+        logging.error(f"api_keys file not found at {module_dir}/data/api_keys")
+        raise HTTPException(500, "api_keys file not found.")
