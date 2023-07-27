@@ -15,7 +15,7 @@ def setup(config: dict):
     mongo_uri = config.get('mongodb_uri')
     if mongo_uri is None:
         raise Exception("Mongo uri was not provided!")
-    client = pymongo.MongoClient()
+    client = pymongo.MongoClient(mongo_uri)
     db = client["botMarketplace"]
     collection = db["registeredBots"]
 

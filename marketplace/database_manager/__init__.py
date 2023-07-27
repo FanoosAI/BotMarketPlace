@@ -15,6 +15,7 @@ except FileNotFoundError:
 
 def manager():
     if database == 'sqlite':
+        sqlite_manager.setup()
         return sqlite_manager
     elif database == 'mongodb':
         mongo_manager.setup(config)

@@ -33,12 +33,13 @@ def setup_db_file():
             logging.info("Database setup complete.")
 
 
-# check if botmarketplace.db file exists. if not, create one and set up the tables
-try:
-    with open(f"{module_dir}/../data/botmarketplace.db", 'r'):
-        logging.info("botmarketplace.db detected. skipping db setup.")
-except FileNotFoundError:
-    setup_db_file()
+def setup():
+    # check if botmarketplace.db file exists. if not, create one and set up the tables
+    try:
+        with open(f"{module_dir}/../data/botmarketplace.db", 'r'):
+            logging.info("botmarketplace.db detected. skipping db setup.")
+    except FileNotFoundError:
+        setup_db_file()
 
 
 def get_bot(username: str) -> Optional[BotInfo]:
