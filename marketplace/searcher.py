@@ -1,7 +1,7 @@
 import asyncio
 from typing import List, Optional
-from marketplace.info import get_user_avatar
 from models.bot_list_model import BotListResponse
+from marketplace.info import get_user_avatar
 from marketplace.database_manager import manager
 
 
@@ -27,6 +27,6 @@ async def get_all_bots() -> List[BotListResponse]:
 
 async def get_avatar(username: str) -> Optional[str]:
     try:
-        return await get_user_avatar(username)
+        return await get_user_avatar(username.split(':')[0])
     except Exception:
         return None

@@ -1,7 +1,7 @@
 homeserver: parsi.ai
 homeserver_url: 'https://parsi.ai'
-#database: 'mongodb'
-database: 'sqlite'
+database: 'mongodb'
+#database: 'sqlite'
 mongodb_uri: 'mongodb://localhost:27017/'
 paths:
   user_info: /_matrix/client/v3/profile/@{}:{}

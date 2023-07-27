@@ -7,22 +7,24 @@ from typing import Optional
 from datetime import datetime
 
 import yaml
-from fastapi import HTTPException, Request
-from marketplace.info import get_user_info
+from fastapi import HTTPException
+from marketplace.info import get_user_info, get_username_and_server
 from marketplace.database_manager import manager
 
 
-def register_bot(request: Request, username: str, name: str, description: Optional[str],
+def register_bot(authorization: Optional[str], username: str, name: str, description: Optional[str],
                  registered_at: datetime, registered_by: str):
     """
     Register a bot in the marketplace.
     """
-    authenticate_api_key(request, registered_by)
-    validate_username(username)
+    authenticate_api_key(registered_by, authorization)
+    user, server = get_username_and_server(username)
+    full_username = "@{}:{}".format(user, server)
+    validate_username(user)
     check_username_existance(username, registered_by)
-    check_for_repeated_registry(username)
+    check_for_repeated_registry(full_username)
 
-    manager().register_bot(username, name, description, registered_at, registered_by)
+    manager().register_bot(full_username, name, description, registered_at, registered_by)
 
 
 def validate_username(username: str):
@@ -56,8 +58,7 @@ def check_for_repeated_registry(bot_username: str):
         raise HTTPException(400, "Bot is already registered.")
 
 
-def authenticate_api_key(request: Request, username: str):
-    api_key = request.headers.get("Authorization")
+def authenticate_api_key(username: str, api_key: Optional[str]):
     if not api_key:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -65,11 +66,13 @@ def authenticate_api_key(request: Request, username: str):
     try:
         with open(f"{module_dir}/data/api_keys.yaml") as f:
             api_keys = yaml.safe_load(f)
+            print(username)
+            print(api_keys)
             if username in api_keys:
                 if api_keys[username] != api_key:
                     raise HTTPException(401, "Invalid API key.")
             else:
-                raise HTTPException(401, "Username not allowed to register bots.")
-    except FileNotFoundError:
-        logging.error(f"api_keys file not found at {module_dir}/data/api_keys")
-        raise HTTPException(500, "api_keys file not found.")
+                raise HTTPException(401, f"Username {username} not allowed to register bots.")
+    except FileNotFoundError as exc:
+        logging.error("api_keys file not found at %s/data/api_keys", module_dir)
+        raise HTTPException(500, "api_keys file not found.") from exc

@@ -16,8 +16,9 @@ except FileNotFoundError:
 def manager():
     if database == 'sqlite':
         return sqlite_manager
-    if database == 'mongo':
+    elif database == 'mongodb':
+        mongo_manager.setup(config)
         return mongo_manager
-    else:
-        logging.error("Invalid database type: %s}", database)
-        raise Exception("Invalid database type.")
+
+    logging.error("Invalid database type: %s}", database)
+    raise Exception("Invalid database type.")

@@ -2,7 +2,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from typing import List
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from marketplace import registry, searcher
 from models import register_model, bot_list_model
@@ -44,14 +44,29 @@ async def root():
 
 @app.get("/public-bots")
 async def public_bots() -> List[bot_list_model.BotListResponse]:
+    """
+    Returns:
+        A list of publicly available and verified bots.
+    """
     return await searcher.get_all_bots()
 
 
 @app.post("/register")
-async def register_bot(request: Request, registry_model: register_model.RegisterBotModel) -> \
+async def register_bot(registry_model: register_model.RegisterBotModel,
+                       authorization: str = Header(None, description="API Key")) -> \
         register_model.RegisterBotResponse:
+    """
+    Register a new EXISTING bot to be available in the public list.
+
+    Args:
+        registry_model: See RegisterBotModel
+        authorization: Your SECRET API key.
+
+    Returns:
+        See RegisterBotResponse
+    """
     registry.register_bot(
-        request,
+        authorization,
         registry_model.username,
         registry_model.name,
         registry_model.description,
