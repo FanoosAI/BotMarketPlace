@@ -18,7 +18,7 @@ def manager():
         sqlite_manager.setup()
         return sqlite_manager
     elif database == 'mongodb':
-        mongo_manager.setup(config)
+        mongo_manager.setup()
         return mongo_manager
 
     logging.error("Invalid database type: %s}", database)
