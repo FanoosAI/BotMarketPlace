@@ -1,4 +1,3 @@
-import os
 from os import getenv
 from typing import List, Optional
 import datetime
@@ -15,7 +14,7 @@ collection: Optional[pymongo.database.Collection] = None
 
 def setup():
     global client, db, collection
-    mongo_uri = os.getenv("MONGO_URI")
+    mongo_uri = getenv("MONGO_URI")
     if mongo_uri is None:
         raise Exception("Mongo uri was not provided!")
     client = pymongo.MongoClient(mongo_uri)

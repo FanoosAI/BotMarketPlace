@@ -5,11 +5,11 @@ from marketplace.info import get_user_avatar
 from marketplace.database_manager import manager
 
 
-async def get_all_bots(all_bots=manager().get_all_bots()) -> List[BotListResponse]:
+async def get_all_bots() -> List[BotListResponse]:
     """
     Get all bots registered in the marketplace.
     """
-    bots = all_bots
+    bots = manager().get_all_bots()
 
     tasks = []
     for bot in bots:
