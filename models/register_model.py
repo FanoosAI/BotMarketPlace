@@ -13,3 +13,8 @@ class RegisterBotModel(BaseModel):
 
 class RegisterBotResponse(BaseModel):
     message: str
+
+
+class RemoveBotModel(BaseModel):
+    username: str
+    bot_username: str
