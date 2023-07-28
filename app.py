@@ -75,3 +75,12 @@ async def register_bot(registry_model: register_model.RegisterBotModel,
     )
     return register_model.RegisterBotResponse(
         message=f"Bot {registry_model.username} registered successfully.")
+
+
+@app.post("/remove")
+async def remove_bot(username: str, bot_username: str, authorization: str = Header(None, description="API Key")) -> dict:
+    """
+    Removes bot from registered bots!
+    """
+    registry.remove_bot(bot_username, authorization)
+    return {"message": "Bot removed successfully"}

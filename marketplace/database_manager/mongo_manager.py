@@ -43,3 +43,9 @@ def register_bot(username: str, name: str, description: Optional[str],
     if collection is None:
         raise Exception("Please setup mongo manager first!")
     collection.insert_one(locals())  # a dictionary from all input values
+
+
+def remove_bot(username: str):
+    if collection is None:
+        raise Exception("Please setup mongo manager first!")
+    collection.delete_one({'username': username})

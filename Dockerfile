@@ -20,4 +20,4 @@ VOLUME ["/app/marketplace/data"]
 EXPOSE 8058
 
 # Start the FastAPI application
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8058", "--log-config", "logging.ini", "--root-path", "/marketplace"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8058", "--log-config", "logging.ini", "--root-path", "$ROOT_PATH"]

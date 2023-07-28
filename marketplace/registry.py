@@ -27,6 +27,13 @@ def register_bot(authorization: Optional[str], username: str, name: str, descrip
     manager().register_bot(full_username, name, description, registered_at, registered_by)
 
 
+def remove_bot(username: str, bot_username: str, api_key: Optional[str]):
+    authenticate_api_key(username, api_key)
+    if not _is_bot_registered(bot_username):
+        raise HTTPException(404, "This bot is not registered!")
+    manager().remove_bot(bot_username)
+
+
 def validate_username(username: str):
     # check if username conforms to the format
     if not username.startswith('bot_'):
@@ -52,9 +59,13 @@ def check_username_existance(bot_username: str, registrar_username: str):
                                  f" {user_info.get('errcode')}: {user_info.get('error')}")
 
 
+def _is_bot_registered(bot_username: str):
+    return manager().get_bot(bot_username) is not None
+
+
 def check_for_repeated_registry(bot_username: str):
     # check if bot is already registered
-    if manager().get_bot(bot_username) is not None:
+    if _is_bot_registered(bot_username):
         raise HTTPException(400, "Bot is already registered.")
 
 

@@ -70,3 +70,9 @@ def register_bot(username: str, name: str, description: Optional[str],
         cursor.execute("INSERT INTO bots VALUES (?, ?, ?, ?, ?)",
                        (username, name, description, registered_at, registered_by))
         cursor.connection.commit()
+
+
+def remove_bot(username: str):
+    with get_db_cursor() as cursor:
+        cursor.execute("DELETE FROM bots WHERE username=?", (username,))
+        cursor.commit()
