@@ -27,6 +27,6 @@ async def get_all_bots() -> List[BotListResponse]:
 
 async def get_avatar(username: str) -> Optional[str]:
     try:
-        return await get_user_avatar(username.split(':')[0])
+        return await get_user_avatar(username)
     except Exception:
         return None
